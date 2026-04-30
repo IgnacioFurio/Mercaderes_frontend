@@ -1,34 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <main className="min-vh-100 bg-light">
+      <section className="container py-5">
+        <div className="row align-items-center min-vh-100">
+          <div className="col-12 col-lg-8 col-xl-7">
+            <p className="text-uppercase text-primary fw-semibold mb-2">
+              Proyecto Mercaderes
+            </p>
+
+            <h1 className="display-4 fw-bold mb-4">
+              Generador de mercaderes para partidas de rol
+            </h1>
+
+            <p className="lead text-secondary mb-4">
+              Crea mercaderes, genera inventarios temporales, personaliza los
+              objetos de venta y guarda tiendas completas para tus sesiones.
+            </p>
+
+            <div className="d-flex flex-column flex-sm-row gap-3">
+              <button type="button" className="btn btn-primary btn-lg">
+                Generar mercader
+              </button>
+
+              <button type="button" className="btn btn-outline-secondary btn-lg">
+                Ver mercaderes guardados
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   )
 }
 
