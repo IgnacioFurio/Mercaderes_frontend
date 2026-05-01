@@ -2,8 +2,13 @@ import { apiRequest } from './apiClient'
 import type { InventoryItem, Merchant, MerchantPreview } from '../types/merchant.types'
 
 interface GenerateMerchantPreviewResponse {
-    merchant: MerchantPreview
-    inventory: InventoryItem[]
+    message: string
+    data: {
+        merchant: MerchantPreview
+        inventory: InventoryItem[]
+        inventoryCount: number
+        inventorySize: number
+    }
 }
 
 interface SaveMerchantBody extends MerchantPreview {
@@ -11,7 +16,23 @@ interface SaveMerchantBody extends MerchantPreview {
 }
 
 export async function generateMerchantPreview(): Promise<GenerateMerchantPreviewResponse> {
-    return apiRequest<GenerateMerchantPreviewResponse>('/merchants/preview')
+    return apiRequest<GenerateMerchantPreviewResponse>('/merchants/generate', {
+    method: 'POST',
+    body: JSON.stringify({
+        name: null,
+        species: null,
+        region: null,
+        shopTypeId: null,
+        merchantQualityId: null,
+        personalityTrait: null,
+        ideal: null,
+        bond: null,
+        flaw: null,
+        gimmick: null,
+        attitude: null,
+        notes: '',
+        }),
+    })
 }
 
 export async function saveMerchant(body: SaveMerchantBody): Promise<Merchant> {
