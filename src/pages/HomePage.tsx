@@ -35,9 +35,31 @@ function HomePage() {
         }
 
     const handleSellAmountChange = (itemId: number, amount: number) => {
+        const inventoryItem = inventory.find((item) => item.itemId === itemId)
+
+        if (!inventoryItem) {
+            return
+        }
+
+        const maxAvailableQuantity = inventoryItem.quantity
+
+        if (maxAvailableQuantity <= 0) {
+            setSellAmounts((currentSellAmounts) => ({
+            ...currentSellAmounts,
+            [itemId]: 0,
+            }))
+
+            return
+        }
+
+        const safeAmount = Math.min(
+            Math.max(Number.isNaN(amount) ? 1 : amount, 1),
+            maxAvailableQuantity,
+        )
+
         setSellAmounts((currentSellAmounts) => ({
             ...currentSellAmounts,
-            [itemId]: amount,
+            [itemId]: safeAmount,
         }))
         }
 
