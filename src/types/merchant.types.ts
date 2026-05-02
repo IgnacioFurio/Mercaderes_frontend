@@ -42,7 +42,7 @@ export interface MerchantPreview {
   shopTypeId: number
   merchantQualityId: number
   shopType?: ShopType
-  merchantQuality?: MerchantQuality
+  quality?: MerchantQuality
 }
 
 export interface Merchant extends MerchantPreview {

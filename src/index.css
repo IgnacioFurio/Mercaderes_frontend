@@ -67,6 +67,11 @@ button:focus-visible {
   margin-bottom: 0.75rem;
 }
 
+.sale-amount-input {
+  min-width: 50px;
+  max-width: 90px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
