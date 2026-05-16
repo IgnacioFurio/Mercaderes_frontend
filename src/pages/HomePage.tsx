@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react'
-import { generateMerchantPreview } from '../services/merchantService'
-import type { InventoryItem, MerchantPreview } from '../types/merchant.types'
+import {
+    calculateSale,
+    generateMerchantPreview,
+    getPriceModifierOptions,
+} from '../services/merchantService'
+
+import type {
+    InventoryItem,
+    MerchantPreview,
+    PriceModifierOption,
+} from '../types/merchant.types'
 
 import { InventoryCard } from '../components/InventoryCard'
 import { MerchantCard } from '../components/MerchantCard'
@@ -12,6 +21,9 @@ function HomePage() {
     const [sellAmounts, setSellAmounts] = useState<Record<number, number>>({})
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [priceModifierOptions, setPriceModifierOptions] = useState<
+        PriceModifierOption[]
+        >([])
 
     const generateMerchantData = () => {
         setIsLoading(true)
@@ -34,6 +46,38 @@ function HomePage() {
             })
         }
 
+    //USESTATE
+    useEffect(() => {
+        getPriceModifierOptions()
+            .then((result) => {
+            setPriceModifierOptions(result.data)
+            })
+            .catch((error) => {
+            console.log(error)
+            setErrorMessage(
+                'No se pudieron cargar las opciones de actitud del mercader.',
+            )
+            })
+        }, [])
+
+    //FUNCTIONS
+    const handleMerchantFieldChange = (
+    field: keyof MerchantPreview,
+    value: string,
+    ) => {
+        setMerchant((currentMerchant) => {
+            if (!currentMerchant) {
+            return currentMerchant
+            }
+
+            return {
+            ...currentMerchant,
+            [field]: value,
+            }
+        })
+    }
+
+    //HANDLERS
     const handleSellAmountChange = (itemId: number, amount: number) => {
         const inventoryItem = inventory.find((item) => item.itemId === itemId)
 
@@ -148,7 +192,11 @@ function HomePage() {
 
                     <div className="row g-4">
                         <div className="col-12">
-                        <MerchantCard merchant={merchant} />
+                        <MerchantCard 
+                        merchant={merchant} 
+                        priceModifierOptions={priceModifierOptions}
+                        onMerchantFieldChange={handleMerchantFieldChange}
+                        />
                         </div>
 
                         <div className="col-12">

@@ -1,6 +1,12 @@
 import { apiRequest } from './apiClient'
-import type { InventoryItem, Merchant, MerchantPreview } from '../types/merchant.types'
-
+import type {
+    CalculateSaleBody,
+    CalculateSaleResponse,
+    GetPriceModifierOptionsResponse,
+    InventoryItem,
+    Merchant,
+    MerchantPreview,
+} from '../types/merchant.types'
 interface GenerateMerchantPreviewResponse {
     message: string
     data: {
@@ -48,4 +54,19 @@ export async function getMerchants(): Promise<Merchant[]> {
 
 export async function getMerchantById(id: number): Promise<Merchant> {
     return apiRequest<Merchant>(`/merchants/${id}`)
+}
+
+export async function getPriceModifierOptions(): Promise<GetPriceModifierOptionsResponse> {
+    return apiRequest<GetPriceModifierOptionsResponse>(
+        '/merchants/price-modifier-options',
+    )
+}
+
+export async function calculateSale(
+    body: CalculateSaleBody,
+): Promise<CalculateSaleResponse> {
+    return apiRequest<CalculateSaleResponse>('/merchants/calculate-sale', {
+        method: 'POST',
+        body: JSON.stringify(body),
+    })
 }
