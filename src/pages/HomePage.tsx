@@ -107,30 +107,54 @@ function HomePage() {
         }))
         }
 
-    const handleSellItem = (itemId: number) => {
-        const amountToSell = sellAmounts[itemId] ?? 1
+const handleSellItem = (itemId: number) => {
+    const inventoryItemToSell = inventory.find(
+        (inventoryItem) => inventoryItem.itemId === itemId,
+    )
+
+    if (!merchant || !inventoryItemToSell) {
+        return
+    }
+
+    const saleQuantity = sellAmounts[itemId] ?? 1
+
+    calculateSale({
+        cashAmountCp: merchant.cashAmountCp,
+        itemId: inventoryItemToSell.itemId,
+        currentQuantity: inventoryItemToSell.quantity,
+        finalPriceCp: inventoryItemToSell.finalPriceCp,
+        saleQuantity,
+    })
+        .then((result) => {
+        setMerchant({
+            ...merchant,
+            cashAmountCp: result.data.merchant.cashAmountCp,
+            cashAmount: result.data.merchant.cashAmount,
+        })
 
         setInventory((currentInventory) =>
             currentInventory.map((inventoryItem) => {
-            if (inventoryItem.itemId !== itemId) {
+            if (inventoryItem.itemId !== result.data.inventoryItem.itemId) {
                 return inventoryItem
             }
 
-            const validAmountToSell = Math.min(amountToSell, inventoryItem.quantity)
-            const nextQuantity = Math.max(inventoryItem.quantity - validAmountToSell, 0)
-
             return {
                 ...inventoryItem,
-                quantity: nextQuantity,
-                status: nextQuantity <= 0 ? 'Agotado' : inventoryItem.status,
+                quantity: result.data.inventoryItem.quantity,
+                status: result.data.inventoryItem.status,
             }
             }),
         )
 
         setSellAmounts((currentSellAmounts) => ({
             ...currentSellAmounts,
-            [itemId]: 1,
+            [itemId]: result.data.inventoryItem.quantity <= 0 ? 0 : 1,
         }))
+        })
+        .catch((error) => {
+        console.log(error)
+        setErrorMessage('No se pudo calcular la venta del objeto.')
+        })
     }
 
     return (
