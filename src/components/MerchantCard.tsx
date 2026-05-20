@@ -1,130 +1,85 @@
-import type {
-    MerchantPreview,
-    PriceModifierOption,
-} from '../types/merchant.types'
+import type { MerchantPreview } from '../types/merchant.types'
+
 interface MerchantCardProps {
     merchant: MerchantPreview | null
-    priceModifierOptions: PriceModifierOption[]
-    onMerchantFieldChange: (field: keyof MerchantPreview, value: string) => void
 }
 
-export const MerchantCard = ({ 
-    merchant,
-    priceModifierOptions,
-    onMerchantFieldChange 
+export const MerchantCard = ({ merchant }: MerchantCardProps) => {
+    if (!merchant) {
+        return (
+        <article className="generator-card">
+            <header className="generator-card-header">Mercader</header>
 
-}: MerchantCardProps) => {
-    return (
-        <div className="row g-4">
-            <div className="col-12 col-xl-6">
-                <article className="generator-card">
-                <header className="generator-card-header">Descripción</header>
-
-                <div className="generator-card-body">
-                    {merchant ? (
-                    <>
-                        <div className="mb-3">
-                            <label htmlFor="merchant-name" className="form-label fw-semibold">
-                                Nombre
-                            </label>
-                            <input
-                                id="merchant-name"
-                                type="text"
-                                className="form-control"
-                                value={merchant.name}
-                                onChange={(event) =>
-                                onMerchantFieldChange('name', event.target.value)
-                                }
-                            />
-                            </div>
-
-                            <div className="row g-3 mb-3">
-                            <div className="col-12 col-md-6">
-                                <label htmlFor="merchant-species" className="form-label fw-semibold">
-                                Especie
-                                </label>
-                                <input
-                                id="merchant-species"
-                                type="text"
-                                className="form-control"
-                                value={merchant.species}
-                                onChange={(event) =>
-                                    onMerchantFieldChange('species', event.target.value)
-                                }
-                                />
-                            </div>
-
-                            <div className="col-12 col-md-6">
-                                <label htmlFor="merchant-region" className="form-label fw-semibold">
-                                Región
-                                </label>
-                                <input
-                                id="merchant-region"
-                                type="text"
-                                className="form-control"
-                                value={merchant.region}
-                                onChange={(event) =>
-                                    onMerchantFieldChange('region', event.target.value)
-                                }
-                                />
-                            </div>
-                            </div>
-
-                            <div className="mb-3">
-                            <label htmlFor="merchant-attitude" className="form-label fw-semibold">
-                                Actitud
-                            </label>
-                            <select
-                                id="merchant-attitude"
-                                className="form-select"
-                                value={merchant.attitude}
-                                onChange={(event) =>
-                                    onMerchantFieldChange('attitude', event.target.value)
-                                }
-                                >
-                                {priceModifierOptions.map((option) => (
-                                    <option key={option.value} value={option.attitudeLabel}>
-                                        {option.attitudeLabel} ({option.priceLabel})
-                                    </option>
-                                ))}
-                                </select>
-                            </div>
-
-                        <dl className="row mb-0">
-                            <dt className="col-sm-5">Tipo de tienda</dt>
-                            <dd className="col-sm-7">
-                                {merchant.shopType?.name ?? merchant.shopTypeId}
-                            </dd>
-
-                            <dt className="col-sm-5">Calidad</dt>
-                            <dd className="col-sm-7">
-                                {merchant.quality?.name}
-                            </dd>
-
-                            <dt className="col-sm-5">Dinero disponible</dt>
-                            <dd className="col-sm-7">{merchant.cashAmount}</dd>
-                        </dl>
-                    </>
-                    ) : (
-                    <p className="text-secondary mb-0">
-                        Pulsa “Generar mercader” para crear una preview desde el
-                        backend.
-                    </p>
-                    )}
-                </div>
-                </article>
+            <div className="generator-card-body">
+            <p className="text-secondary mb-0">
+                Genera un mercader para ver aquí su información.
+            </p>
             </div>
+        </article>
+        )
+    }
 
-            <div className="col-12 col-xl-6">
-                <article className="generator-card">
-                <header className="generator-card-header">
-                    Rasgos de personalidad
-                </header>
+    return (
+        <article className="generator-card">
+            <div className="generator-card-body">
+                <div className="row mb-2">
+                    <div className='col-md-4 col-12'>
+                        <h2 className="h3 fw-bold">{merchant.name}
+                            <p className="mb-0 fs-6 text-secondary mb-2">
+                            ({merchant.species} de {merchant.region})
+                            </p>
+                        </h2>
 
-                <div className="generator-card-body">
-                    {merchant ? (
-                    <dl className="mb-0">
-                        <dt>Rasgo</dt>
+                        <p className="text-uppercase text-secondary fw-semibold mb-2">
+                            {merchant.shopType?.name ?? 'Tipo de tienda desconocido'} ·{' '}
+                            {merchant.quality?.name ?? 'Calidad desconocida'}
+                        </p>
+                    </div>
+
+                    {/* Cuadros */}
+                    <div className='row col-md-7 align-self-center justify-content-between'>
+                        <div className="col-4 mb-2">
+                            <div className="border rounded-3 p-3 h-100">
+                                <p className="text-uppercase text-secondary small fw-semibold mb-1">
+                                    Actitud
+                                </p>
+                                <p className="mb-0 fw-semibold">{merchant.attitude}</p>
+                            </div>
+                        </div>
+
+                        <div className="col-4 mb-2">
+                            <div className="border rounded-3 p-3 h-100">
+                            <p className="text-uppercase text-secondary small fw-semibold mb-1">
+                                Precio
+                            </p>
+                            <p className="mb-0 fw-semibold">
+                                {merchant.priceModifierPercent > 0
+                                ? `+${merchant.priceModifierPercent}%`
+                                : `${merchant.priceModifierPercent}%`}
+                            </p>
+                            </div>
+                        </div>
+
+                        <div className="col-4 mb-2">
+                            <div className="border rounded-3 p-3 h-100">
+                            <p className="text-uppercase text-secondary small fw-semibold mb-1">
+                                Caja
+                            </p>
+                            <p className="mb-0 fw-semibold">{merchant.cashAmount}</p>
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+
+                <div className='row'>                    
+                    {/* Personalidad */}
+                    <div className="col-md-8 col-sm-12">
+                        <dl className="mb-0">
+                        <dt>Detalles</dt>
+                        <dd>{merchant.notes || 'Sin más detalles.'}</dd>
+                        
+                        <dt>Rasgo de Personalidad</dt>
                         <dd>{merchant.personalityTrait}</dd>
 
                         <dt>Ideal</dt>
@@ -138,15 +93,10 @@ export const MerchantCard = ({
 
                         <dt>Gimmick</dt>
                         <dd>{merchant.gimmick}</dd>
-                    </dl>
-                    ) : (
-                    <p className="text-secondary mb-0">
-                        Aquí aparecerán los rasgos narrativos del mercader.
-                    </p>
-                    )}
+                        </dl>
+                    </div>
                 </div>
-                </article>
             </div>
-        </div>
+        </article>
     )
 }

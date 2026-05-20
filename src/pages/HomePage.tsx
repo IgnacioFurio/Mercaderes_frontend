@@ -107,55 +107,55 @@ function HomePage() {
         }))
         }
 
-const handleSellItem = (itemId: number) => {
-    const inventoryItemToSell = inventory.find(
-        (inventoryItem) => inventoryItem.itemId === itemId,
-    )
-
-    if (!merchant || !inventoryItemToSell) {
-        return
-    }
-
-    const saleQuantity = sellAmounts[itemId] ?? 1
-
-    calculateSale({
-        cashAmountCp: merchant.cashAmountCp,
-        itemId: inventoryItemToSell.itemId,
-        currentQuantity: inventoryItemToSell.quantity,
-        finalPriceCp: inventoryItemToSell.finalPriceCp,
-        saleQuantity,
-    })
-        .then((result) => {
-        setMerchant({
-            ...merchant,
-            cashAmountCp: result.data.merchant.cashAmountCp,
-            cashAmount: result.data.merchant.cashAmount,
-        })
-
-        setInventory((currentInventory) =>
-            currentInventory.map((inventoryItem) => {
-            if (inventoryItem.itemId !== result.data.inventoryItem.itemId) {
-                return inventoryItem
-            }
-
-            return {
-                ...inventoryItem,
-                quantity: result.data.inventoryItem.quantity,
-                status: result.data.inventoryItem.status,
-            }
-            }),
+    const handleSellItem = (itemId: number) => {
+        const inventoryItemToSell = inventory.find(
+            (inventoryItem) => inventoryItem.itemId === itemId,
         )
 
-        setSellAmounts((currentSellAmounts) => ({
-            ...currentSellAmounts,
-            [itemId]: result.data.inventoryItem.quantity <= 0 ? 0 : 1,
-        }))
+        if (!merchant || !inventoryItemToSell) {
+            return
+        }
+
+        const saleQuantity = sellAmounts[itemId] ?? 1
+
+        calculateSale({
+            cashAmountCp: merchant.cashAmountCp,
+            itemId: inventoryItemToSell.itemId,
+            currentQuantity: inventoryItemToSell.quantity,
+            finalPriceCp: inventoryItemToSell.finalPriceCp,
+            saleQuantity,
         })
-        .catch((error) => {
-        console.log(error)
-        setErrorMessage('No se pudo calcular la venta del objeto.')
-        })
-    }
+            .then((result) => {
+            setMerchant({
+                ...merchant,
+                cashAmountCp: result.data.merchant.cashAmountCp,
+                cashAmount: result.data.merchant.cashAmount,
+            })
+
+            setInventory((currentInventory) =>
+                currentInventory.map((inventoryItem) => {
+                if (inventoryItem.itemId !== result.data.inventoryItem.itemId) {
+                    return inventoryItem
+                }
+
+                return {
+                    ...inventoryItem,
+                    quantity: result.data.inventoryItem.quantity,
+                    status: result.data.inventoryItem.status,
+                }
+                }),
+            )
+
+            setSellAmounts((currentSellAmounts) => ({
+                ...currentSellAmounts,
+                [itemId]: result.data.inventoryItem.quantity <= 0 ? 0 : 1,
+            }))
+            })
+            .catch((error) => {
+            console.log(error)
+            setErrorMessage('No se pudo calcular la venta del objeto.')
+            })
+        }
 
     return (
         <main className="min-vh-100 bg-dark text-light">
@@ -218,8 +218,6 @@ const handleSellItem = (itemId: number) => {
                         <div className="col-12">
                         <MerchantCard 
                         merchant={merchant} 
-                        priceModifierOptions={priceModifierOptions}
-                        onMerchantFieldChange={handleMerchantFieldChange}
                         />
                         </div>
 
