@@ -101,3 +101,27 @@ export interface CalculateSaleResponse {
     }
   }
 }
+
+export interface MerchantOptionsResponse {
+  message: string
+  data: {
+    species: string[]
+    regions: string[]
+    shopTypes: ShopType[]
+    merchantQualities: MerchantQuality[]
+    personalityTraits: string[]
+    ideals: string[]
+    bonds: string[]
+    flaws: string[]
+    gimmicks: string[]
+  }
+}
+
+export interface MerchantGenerationFilters {
+  shopTypeId: number | null
+  merchantQualityId: number | null
+  species: string | null
+  region: string | null
+  attitude: string | null
+  priceModifierPercent: number | null
+}

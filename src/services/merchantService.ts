@@ -5,8 +5,26 @@ import type {
     GetPriceModifierOptionsResponse,
     InventoryItem,
     Merchant,
+    MerchantOptionsResponse,
     MerchantPreview,
 } from '../types/merchant.types'
+
+interface GenerateMerchantPreviewBody {
+    name: string | null
+    species: string | null
+    region: string | null
+    attitude: string | null
+    priceModifierPercent: number | null
+    shopTypeId: number | null
+    merchantQualityId: number | null
+    personalityTrait: string | null
+    ideal: string | null
+    bond: string | null
+    flaw: string | null
+    gimmick: string | null
+    notes: string
+}
+
 interface GenerateMerchantPreviewResponse {
     message: string
     data: {
@@ -21,23 +39,12 @@ interface SaveMerchantBody extends MerchantPreview {
     inventory: InventoryItem[]
 }
 
-export async function generateMerchantPreview(): Promise<GenerateMerchantPreviewResponse> {
+export async function generateMerchantPreview(
+    body: GenerateMerchantPreviewBody,
+): Promise<GenerateMerchantPreviewResponse> {
     return apiRequest<GenerateMerchantPreviewResponse>('/merchants/generate', {
-    method: 'POST',
-    body: JSON.stringify({
-        name: null,
-        species: null,
-        region: null,
-        shopTypeId: null,
-        merchantQualityId: null,
-        personalityTrait: null,
-        ideal: null,
-        bond: null,
-        flaw: null,
-        gimmick: null,
-        attitude: null,
-        notes: '',
-        }),
+        method: 'POST',
+        body: JSON.stringify(body),
     })
 }
 
@@ -69,4 +76,8 @@ export async function calculateSale(
         method: 'POST',
         body: JSON.stringify(body),
     })
+}
+
+export async function getMerchantOptions(): Promise<MerchantOptionsResponse> {
+    return apiRequest<MerchantOptionsResponse>('/merchant-options')
 }

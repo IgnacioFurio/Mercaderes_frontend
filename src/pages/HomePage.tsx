@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react'
 import {
     calculateSale,
     generateMerchantPreview,
+    getMerchantOptions,
     getPriceModifierOptions,
 } from '../services/merchantService'
 
 import type {
     InventoryItem,
+    MerchantGenerationFilters,
+    MerchantOptionsResponse,
     MerchantPreview,
     PriceModifierOption,
 } from '../types/merchant.types'
@@ -25,12 +28,38 @@ function HomePage() {
     const [priceModifierOptions, setPriceModifierOptions] = useState<
         PriceModifierOption[]
         >([])
+        const [merchantOptions, setMerchantOptions] = useState<
+        MerchantOptionsResponse['data'] | null
+        >(null)
+    const [generationFilters, setGenerationFilters] =
+        useState<MerchantGenerationFilters>({
+            shopTypeId: null,
+            merchantQualityId: null,
+            species: null,
+            region: null,
+            attitude: null,
+            priceModifierPercent: null,
+        })
 
     const generateMerchantData = () => {
         setIsLoading(true)
         setErrorMessage(null)
 
-        generateMerchantPreview()
+        generateMerchantPreview({
+            name: null,
+            species: generationFilters.species,
+            region: generationFilters.region,
+            attitude: generationFilters.attitude,
+            priceModifierPercent: generationFilters.priceModifierPercent,
+            shopTypeId: generationFilters.shopTypeId,
+            merchantQualityId: generationFilters.merchantQualityId,
+            personalityTrait: null,
+            ideal: null,
+            bond: null,
+            flaw: null,
+            gimmick: null,
+            notes: '',
+            })
             .then((result) => {
             setMerchant(result.data.merchant)
             setInventory(result.data.inventory)
@@ -49,6 +78,15 @@ function HomePage() {
 
     //USESTATE
     useEffect(() => {
+        getMerchantOptions()
+            .then((result) => {
+                setMerchantOptions(result.data)
+            })
+            .catch((error) => {
+                console.log(error)
+                setErrorMessage('No se pudieron cargar las opciones del formulario.')
+            })
+
         getPriceModifierOptions()
             .then((result) => {
             setPriceModifierOptions(result.data)
@@ -64,21 +102,7 @@ function HomePage() {
     }, [])
 
     //FUNCTIONS
-    const handleMerchantFieldChange = (
-    field: keyof MerchantPreview,
-    value: string,
-    ) => {
-        setMerchant((currentMerchant) => {
-            if (!currentMerchant) {
-            return currentMerchant
-            }
-
-            return {
-            ...currentMerchant,
-            [field]: value,
-            }
-        })
-    }
+    
 
     //HANDLERS
     const handleSellAmountChange = (itemId: number, amount: number) => {
@@ -168,8 +192,12 @@ function HomePage() {
                         <GeneratorSidebar
                             merchant={merchant}
                             isLoading={isLoading}
+                            merchantOptions={merchantOptions}
+                            priceModifierOptions={priceModifierOptions}
+                            generationFilters={generationFilters}
+                            onGenerationFiltersChange={setGenerationFilters}
                             onGenerateMerchant={generateMerchantData}
-                        />
+                            />
                     </aside>
 
                 <section className="col-12 col-lg-9 col-xl-10">
