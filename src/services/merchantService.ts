@@ -7,6 +7,8 @@ import type {
     Merchant,
     MerchantOptionsResponse,
     MerchantPreview,
+    RecalculateInventoryPricesBody,
+    RecalculateInventoryPricesResponse,
 } from '../types/merchant.types'
 
 interface GenerateMerchantPreviewBody {
@@ -80,4 +82,16 @@ export async function calculateSale(
 
 export async function getMerchantOptions(): Promise<MerchantOptionsResponse> {
     return apiRequest<MerchantOptionsResponse>('/merchant-options')
+}
+
+export async function recalculateInventoryPrices(
+    body: RecalculateInventoryPricesBody,
+): Promise<RecalculateInventoryPricesResponse> {
+    return apiRequest<RecalculateInventoryPricesResponse>(
+        '/merchants/recalculate-inventory-prices',
+        {
+            method: 'POST',
+            body: JSON.stringify(body),
+        },
+    )
 }

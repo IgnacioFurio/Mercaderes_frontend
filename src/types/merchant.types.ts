@@ -125,3 +125,17 @@ export interface MerchantGenerationFilters {
   attitude: string | null
   priceModifierPercent: number | null
 }
+
+export interface RecalculateInventoryPricesBody {
+  priceModifierPercent: number
+  inventory: InventoryItem[]
+}
+
+export interface RecalculateInventoryPricesResponse {
+  message: string
+  data: {
+    priceModifierPercent: number
+    attitude: string
+    inventory: InventoryItem[]
+  }
+}

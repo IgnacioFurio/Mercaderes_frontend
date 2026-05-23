@@ -4,6 +4,7 @@ import {
     generateMerchantPreview,
     getMerchantOptions,
     getPriceModifierOptions,
+    recalculateInventoryPrices,
 } from '../services/merchantService'
 
 import type {
@@ -102,7 +103,29 @@ function HomePage() {
     }, [])
 
     //FUNCTIONS
-    
+    const handleMerchantAttitudeChange = (priceModifierPercent: number) => {
+        if (!merchant) {
+            return
+        }
+
+        recalculateInventoryPrices({
+            priceModifierPercent,
+            inventory,
+        })
+            .then((result) => {
+            setMerchant({
+                ...merchant,
+                attitude: result.data.attitude,
+                priceModifierPercent: result.data.priceModifierPercent,
+            })
+
+            setInventory(result.data.inventory)
+            })
+            .catch((error) => {
+            console.log(error)
+            setErrorMessage('No se pudieron recalcular los precios del inventario.')
+            })
+        }
 
     //HANDLERS
     const handleSellAmountChange = (itemId: number, amount: number) => {
@@ -210,8 +233,10 @@ function HomePage() {
                     <div className="row g-4">
                         <div className="col-12">
                         <MerchantCard 
-                        merchant={merchant} 
-                        />
+                            merchant={merchant}
+                            priceModifierOptions={priceModifierOptions}
+                            onMerchantAttitudeChange={handleMerchantAttitudeChange}
+                            />
                         </div>
 
                         <div className="col-12">

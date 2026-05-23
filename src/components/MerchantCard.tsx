@@ -1,10 +1,19 @@
-import type { MerchantPreview } from '../types/merchant.types'
+import type { 
+    MerchantPreview,
+    PriceModifierOption,
+} from '../types/merchant.types'
 
 interface MerchantCardProps {
     merchant: MerchantPreview | null
+    priceModifierOptions: PriceModifierOption[]
+    onMerchantAttitudeChange: (priceModifierPercent: number) => void
 }
 
-export const MerchantCard = ({ merchant }: MerchantCardProps) => {
+export const MerchantCard = ({
+    merchant,
+    priceModifierOptions,
+    onMerchantAttitudeChange,
+}: MerchantCardProps) => {
     if (!merchant) {
         return (
         <article className="generator-card">
@@ -38,25 +47,30 @@ export const MerchantCard = ({ merchant }: MerchantCardProps) => {
 
                     {/* Cuadros */}
                     <div className='row col-md-7 align-self-center justify-content-between'>
-                        <div className="col-4 mb-2">
+                        <div className="col-8 mb-2">
                             <div className="border rounded-3 p-3 h-100">
-                                <p className="text-uppercase text-secondary small fw-semibold mb-1">
-                                    Actitud
-                                </p>
-                                <p className="mb-0 fw-semibold">{merchant.attitude}</p>
-                            </div>
-                        </div>
+                                <label
+                                    htmlFor="merchant-commercial-attitude"
+                                    className="text-uppercase text-secondary small fw-semibold mb-1"
+                                    >
+                                    Actitud comercial
+                                </label>
 
-                        <div className="col-4 mb-2">
-                            <div className="border rounded-3 p-3 h-100">
-                            <p className="text-uppercase text-secondary small fw-semibold mb-1">
-                                Precio
-                            </p>
-                            <p className="mb-0 fw-semibold">
-                                {merchant.priceModifierPercent > 0
-                                ? `+${merchant.priceModifierPercent}%`
-                                : `${merchant.priceModifierPercent}%`}
-                            </p>
+                                <select
+                                    id="merchant-commercial-attitude"
+                                    className="form-select mt-1"
+                                    value={merchant.priceModifierPercent}
+                                    onChange={(event) =>
+                                    onMerchantAttitudeChange(Number(event.target.value))
+                                    }
+                                    >
+                                    {priceModifierOptions.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.attitudeLabel} ({option.priceLabel})
+                                    </option>
+                                    ))}
+                                </select>
+
                             </div>
                         </div>
 
