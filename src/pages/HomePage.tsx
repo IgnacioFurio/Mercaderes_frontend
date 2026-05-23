@@ -127,6 +127,64 @@ function HomePage() {
             })
         }
 
+    const copyMerchantToClipboard = () => {
+        if (!merchant) {
+            return
+        }
+
+        const inventoryText =
+            inventory.length > 0
+                ? [
+                    '| Objeto | Cantidad | Precio/u | Estado | Fuente | Notas |',
+                    '|---|---:|---:|---|---|---|',
+                    ...inventory.map((inventoryItem) => {
+                    const notes =
+                        inventoryItem.notes || inventoryItem.item.notes || 'Sin notas'
+
+                    return `| ${inventoryItem.item.name} | ${inventoryItem.quantity} | ${inventoryItem.finalPrice} | ${inventoryItem.status} | ${inventoryItem.item.source || '—'} | ${notes} |`
+                    }),
+                ].join('\n')
+                : 'Sin inventario disponible.'
+
+        const priceModifierLabel =
+            merchant.priceModifierPercent > 0
+                ? `+${merchant.priceModifierPercent}%`
+                : `${merchant.priceModifierPercent}%`
+
+            const merchantText = [
+                '{{wide,',
+                `## ${merchant.name}`,
+                '',
+                `***${merchant.species} de ${merchant.region}***  `,
+                `**Tienda:** ${merchant.shopType?.name ?? 'Tipo desconocido'}  `,
+                `**Calidad:** ${merchant.quality?.name ?? 'Calidad desconocida'}  `,
+                `**Actitud comercial:** ${merchant.attitude} (${priceModifierLabel})  `,
+                `**Caja:** ${merchant.cashAmount}  `,
+                `**Detalles:** ${merchant.notes || 'Sin más detalles.'}  `,
+                `**Rasgo:** ${merchant.personalityTrait}  `,
+                `**Ideal:** ${merchant.ideal}  `,
+                `**Vínculo:** ${merchant.bond}  `,
+                `**Defecto:** ${merchant.flaw}  `,
+                `**Gimmick:** ${merchant.gimmick}  `,
+                '',
+                '### Inventario',
+                '',
+                inventoryText,
+                '}}',
+                ].join('\n')
+
+        navigator.clipboard
+            .writeText(merchantText)
+            .then(() => {
+            setErrorMessage(null)
+            console.log('Mercader copiado al portapapeles')
+            })
+            .catch((error) => {
+            console.log(error)
+            setErrorMessage('No se pudo copiar el mercader al portapapeles.')
+            })
+        }
+
     //HANDLERS
     const handleSellAmountChange = (itemId: number, amount: number) => {
         const inventoryItem = inventory.find((item) => item.itemId === itemId)
@@ -220,6 +278,7 @@ function HomePage() {
                             generationFilters={generationFilters}
                             onGenerationFiltersChange={setGenerationFilters}
                             onGenerateMerchant={generateMerchantData}
+                            onCopyMerchant={copyMerchantToClipboard}
                             />
                     </aside>
 

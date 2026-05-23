@@ -14,6 +14,7 @@ interface GeneratorSidebarProps {
         React.SetStateAction<MerchantGenerationFilters>
     >
     onGenerateMerchant: () => void
+    onCopyMerchant: () => void
 }
 
 export const GeneratorSidebar = ({
@@ -24,6 +25,7 @@ export const GeneratorSidebar = ({
     generationFilters,
     onGenerationFiltersChange,
     onGenerateMerchant,
+    onCopyMerchant
 }: GeneratorSidebarProps) => {
     const shopTypes = merchantOptions?.shopTypes ?? []
     const merchantQualities = merchantOptions?.merchantQualities ?? []
@@ -180,11 +182,12 @@ export const GeneratorSidebar = ({
                 </button>
 
                 <button
-                type="button"
-                className="btn btn-outline-light"
-                disabled={!merchant}
-                >
-                Copiar mercader
+                    type="button"
+                    onClick={onCopyMerchant}
+                    className="btn btn-outline-light"
+                    disabled={!merchant}
+                    >
+                    Copiar mercader
                 </button>
 
                 <button
