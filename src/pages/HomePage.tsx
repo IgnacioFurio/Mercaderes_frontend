@@ -11,8 +11,9 @@ import type {
     PriceModifierOption,
 } from '../types/merchant.types'
 
-import { InventoryCard } from '../components/InventoryCard'
+import { GeneratorSidebar } from '../components/GeneratorSidebar'
 import { MerchantCard } from '../components/MerchantCard'
+import { InventoryCard } from '../components/InventoryCard'
 
 function HomePage() {
     const [merchant, setMerchant] = useState<MerchantPreview | null>(null)
@@ -162,49 +163,11 @@ function HomePage() {
             <div className="container-fluid py-4">
                 <div className="row g-4">
                     <aside className="col-12 col-lg-3 col-xl-2">
-                        <section className="merchant-sidebar rounded-4 p-4 h-100">
-                        <h1 className="h2 fw-light mb-4">Mercaderes</h1>
-
-                        <p className="text-light-emphasis mb-4">
-                            Generador de tiendas para partidas de rol.
-                        </p>
-
-                        <div className="d-grid gap-3">
-                            <button
-                            type="button"
-                            className="btn btn-warning btn-lg fw-semibold"
-                            onClick={generateMerchantData}
-                            disabled={isLoading}
-                            >
-                            {isLoading ? 'Generando...' : 'Generar mercader'}
-                            </button>
-
-                            <button
-                            type="button"
-                            className="btn btn-outline-light"
-                            disabled={!merchant}
-                            >
-                            Guardar mercader
-                            </button>
-
-                            <button type="button" className="btn btn-outline-light">
-                            Ver guardados
-                            </button>
-                        </div>
-
-                        {merchant && (
-                            <div className="mt-4 pt-4 border-top border-light border-opacity-25">
-                            <p className="small text-uppercase text-light-emphasis mb-2">
-                                Última preview
-                            </p>
-
-                            <p className="mb-1 fw-semibold">{merchant.name}</p>
-                            <p className="mb-0 small text-light-emphasis">
-                                {merchant.species} · {merchant.region}
-                            </p>
-                            </div>
-                        )}
-                        </section>
+                        <GeneratorSidebar
+                            merchant={merchant}
+                            isLoading={isLoading}
+                            onGenerateMerchant={generateMerchantData}
+                        />
                     </aside>
 
                 <section className="col-12 col-lg-9 col-xl-10">
