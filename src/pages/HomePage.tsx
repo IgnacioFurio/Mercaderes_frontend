@@ -59,7 +59,9 @@ function HomePage() {
                 'No se pudieron cargar las opciones de actitud del mercader.',
             )
             })
-        }, [])
+
+        generateMerchantData()
+    }, [])
 
     //FUNCTIONS
     const handleMerchantFieldChange = (
