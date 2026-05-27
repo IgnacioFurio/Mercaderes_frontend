@@ -15,6 +15,7 @@ interface GeneratorSidebarProps {
     >
     onGenerateMerchant: () => void
     onCopyMerchant: () => void
+    onSaveMerchant: () => void
 }
 
 export const GeneratorSidebar = ({
@@ -25,7 +26,8 @@ export const GeneratorSidebar = ({
     generationFilters,
     onGenerationFiltersChange,
     onGenerateMerchant,
-    onCopyMerchant
+    onCopyMerchant,
+    onSaveMerchant,
 }: GeneratorSidebarProps) => {
     const shopTypes = merchantOptions?.shopTypes ?? []
     const merchantQualities = merchantOptions?.merchantQualities ?? []
@@ -193,6 +195,7 @@ export const GeneratorSidebar = ({
                 <button
                 type="button"
                 className="btn btn-outline-light"
+                onClick={onSaveMerchant}
                 disabled={!merchant}
                 >
                 Guardar en local

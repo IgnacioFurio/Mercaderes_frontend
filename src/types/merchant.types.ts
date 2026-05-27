@@ -139,3 +139,10 @@ export interface RecalculateInventoryPricesResponse {
     inventory: InventoryItem[]
   }
 }
+
+export interface SavedMerchant {
+  id: string
+  savedAt: string
+  merchant: MerchantPreview
+  inventory: InventoryItem[]
+}

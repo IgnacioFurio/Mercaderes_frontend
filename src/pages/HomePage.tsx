@@ -19,6 +19,8 @@ import { GeneratorSidebar } from '../components/GeneratorSidebar'
 import { MerchantCard } from '../components/MerchantCard'
 import { InventoryCard } from '../components/InventoryCard'
 
+import { saveMerchantToLocalStorage } from '../services/localStorageService'
+
 function HomePage() {
     const [merchant, setMerchant] = useState<MerchantPreview | null>(null)
     const [inventory, setInventory] = useState<InventoryItem[]>([])
@@ -185,6 +187,21 @@ function HomePage() {
             })
         }
 
+    const saveCurrentMerchantToLocalStorage = () => {
+        if (!merchant) {
+            return
+        }
+
+        saveMerchantToLocalStorage({
+            id: crypto.randomUUID(),
+            savedAt: new Date().toISOString(),
+            merchant,
+            inventory,
+        })
+
+        console.log('Mercader guardado en localStorage')
+        }
+
     //HANDLERS
     const handleSellAmountChange = (itemId: number, amount: number) => {
         const inventoryItem = inventory.find((item) => item.itemId === itemId)
@@ -279,6 +296,7 @@ function HomePage() {
                             onGenerationFiltersChange={setGenerationFilters}
                             onGenerateMerchant={generateMerchantData}
                             onCopyMerchant={copyMerchantToClipboard}
+                            onSaveMerchant={saveCurrentMerchantToLocalStorage}
                             />
                     </aside>
 
