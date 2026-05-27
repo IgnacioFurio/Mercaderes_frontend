@@ -13,13 +13,17 @@ import type {
     MerchantOptionsResponse,
     MerchantPreview,
     PriceModifierOption,
+    SavedMerchant,
 } from '../types/merchant.types'
 
 import { GeneratorSidebar } from '../components/GeneratorSidebar'
 import { MerchantCard } from '../components/MerchantCard'
 import { InventoryCard } from '../components/InventoryCard'
 
-import { saveMerchantToLocalStorage } from '../services/localStorageService'
+import {
+    getSavedMerchants,
+    saveMerchantToLocalStorage,
+} from '../services/localStorageService'
 
 function HomePage() {
     const [merchant, setMerchant] = useState<MerchantPreview | null>(null)
@@ -64,9 +68,21 @@ function HomePage() {
             notes: '',
             })
             .then((result) => {
-            setMerchant(result.data.merchant)
-            setInventory(result.data.inventory)
-            setInventorySize(result.data.inventorySize)
+                const generatedMerchant = result.data.merchant
+                const generatedInventory = result.data.inventory
+
+                setMerchant(generatedMerchant)
+                setInventory(generatedInventory)
+                setInventorySize(result.data.inventorySize)
+
+                const updatedSavedMerchants = saveMerchantToLocalStorage({
+                    id: crypto.randomUUID(),
+                    savedAt: new Date().toISOString(),
+                    merchant: generatedMerchant,
+                    inventory: generatedInventory,
+                })
+
+                setSavedMerchants(updatedSavedMerchants)
             })
             .catch((error) => {
             console.log(error)
@@ -78,6 +94,8 @@ function HomePage() {
             setIsLoading(false)
             })
         }
+
+    const [savedMerchants, setSavedMerchants] = useState<SavedMerchant[]>([])
 
     //USESTATE
     useEffect(() => {
@@ -102,6 +120,8 @@ function HomePage() {
             })
 
         generateMerchantData()
+
+        setSavedMerchants(getSavedMerchants())
     }, [])
 
     //FUNCTIONS
@@ -187,19 +207,12 @@ function HomePage() {
             })
         }
 
-    const saveCurrentMerchantToLocalStorage = () => {
-        if (!merchant) {
-            return
-        }
-
-        saveMerchantToLocalStorage({
-            id: crypto.randomUUID(),
-            savedAt: new Date().toISOString(),
-            merchant,
-            inventory,
-        })
-
-        console.log('Mercader guardado en localStorage')
+    const loadSavedMerchant = (savedMerchant: SavedMerchant) => {
+        setMerchant(savedMerchant.merchant)
+        setInventory(savedMerchant.inventory)
+        setInventorySize(savedMerchant.inventory.length)
+        setSellAmounts({})
+        setErrorMessage(null)
         }
 
     //HANDLERS
@@ -293,10 +306,11 @@ function HomePage() {
                             merchantOptions={merchantOptions}
                             priceModifierOptions={priceModifierOptions}
                             generationFilters={generationFilters}
+                            savedMerchants={savedMerchants}
                             onGenerationFiltersChange={setGenerationFilters}
                             onGenerateMerchant={generateMerchantData}
                             onCopyMerchant={copyMerchantToClipboard}
-                            onSaveMerchant={saveCurrentMerchantToLocalStorage}
+                            onLoadSavedMerchant={loadSavedMerchant}
                             />
                     </aside>
 

@@ -79,6 +79,19 @@ button:focus-visible {
   max-width: 90px;
 }
 
+.history-toggle-button {
+  border: none;
+  background: transparent;
+  line-height: 1;
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+
+.history-toggle-button:hover {
+  opacity: 1;
+  background: transparent;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

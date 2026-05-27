@@ -1,21 +1,26 @@
+import { useState } from 'react'
+
 import type {
     MerchantGenerationFilters,
     MerchantOptionsResponse,
     MerchantPreview,
     PriceModifierOption,
+    SavedMerchant,
 } from '../types/merchant.types'
+
 interface GeneratorSidebarProps {
     merchant: MerchantPreview | null
     isLoading: boolean
     merchantOptions: MerchantOptionsResponse['data'] | null
     priceModifierOptions: PriceModifierOption[]
     generationFilters: MerchantGenerationFilters
+    savedMerchants: SavedMerchant[]
     onGenerationFiltersChange: React.Dispatch<
         React.SetStateAction<MerchantGenerationFilters>
     >
     onGenerateMerchant: () => void
     onCopyMerchant: () => void
-    onSaveMerchant: () => void
+    onLoadSavedMerchant: (savedMerchant: SavedMerchant) => void
 }
 
 export const GeneratorSidebar = ({
@@ -24,10 +29,11 @@ export const GeneratorSidebar = ({
     merchantOptions,
     priceModifierOptions,
     generationFilters,
+    savedMerchants,
     onGenerationFiltersChange,
     onGenerateMerchant,
     onCopyMerchant,
-    onSaveMerchant,
+    onLoadSavedMerchant,
 }: GeneratorSidebarProps) => {
     const shopTypes = merchantOptions?.shopTypes ?? []
     const merchantQualities = merchantOptions?.merchantQualities ?? []
@@ -53,6 +59,12 @@ export const GeneratorSidebar = ({
             [field]: value === '' ? null : Number(value),
         }))
         }
+
+    const [showFullHistory, setShowFullHistory] = useState(false)
+
+    const visibleSavedMerchants = showFullHistory
+    ? savedMerchants
+    : savedMerchants.slice(0, 5)
 
     return (
         <>
@@ -191,28 +203,47 @@ export const GeneratorSidebar = ({
                     >
                     Copiar mercader
                 </button>
-
-                <button
-                type="button"
-                className="btn btn-outline-light"
-                onClick={onSaveMerchant}
-                disabled={!merchant}
-                >
-                Guardar en local
-                </button>
             </div>
 
             {merchant && (
                 <div className="mt-4 pt-4 border-top border-light border-opacity-25">
-                <p className="small text-uppercase text-light-emphasis mb-2">
-                    Última preview
-                </p>
+                    <p className="small text-uppercase text-light-emphasis mb-3">
+                        Historial local
+                    </p>
 
-                <p className="mb-1 fw-semibold">{merchant.name}</p>
-                <p className="mb-0 small text-light-emphasis">
-                    {merchant.species} · {merchant.region}
-                </p>
-                </div>
+                    {savedMerchants.length === 0 ? (
+                        <p className="small text-light-emphasis mb-0">
+                        Todavía no hay mercaderes guardados.
+                        </p>
+                    ) : (
+                        <div className="d-flex flex-column gap-3">
+                        {visibleSavedMerchants.map((savedMerchant) => (
+                            <button
+                                key={savedMerchant.id}
+                                type="button"
+                                className="btn btn-link text-start text-decoration-none p-0 text-light"
+                                onClick={() => onLoadSavedMerchant(savedMerchant)}
+                                >
+                                <p className="mb-1 fw-semibold">
+                                    {savedMerchant.merchant.name}
+                                </p>
+                                <p className="mb-0 small text-light-emphasis">
+                                    {savedMerchant.merchant.species} · {savedMerchant.merchant.region}
+                                </p>
+                            </button>
+                        ))}
+                        {savedMerchants.length > 5 && (
+                            <button
+                                type="button"
+                                className="btn btn-sm text-light p-0 history-toggle-button"
+                                onClick={() => setShowFullHistory((currentValue) => !currentValue)}
+                            >
+                                {showFullHistory ? '▲' : '▼'}
+                            </button>
+                            )}
+                        </div>
+                    )}
+                    </div>
             )}
         </section>
         </>
