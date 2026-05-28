@@ -19,6 +19,7 @@ import type {
 import { GeneratorSidebar } from '../components/GeneratorSidebar'
 import { MerchantCard } from '../components/MerchantCard'
 import { InventoryCard } from '../components/InventoryCard'
+import { Footer } from '../components/Footer'
 
 import {
     getSavedMerchants,
@@ -344,6 +345,7 @@ function HomePage() {
                     </section>
                 </div>
             </div>
+            <Footer />
         </main>
     )
 }
