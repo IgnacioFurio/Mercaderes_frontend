@@ -5,7 +5,6 @@ import type {
     MerchantOptionsResponse,
     MerchantPreview,
     PriceModifierOption,
-    SavedMerchant,
 } from '../types/merchant.types'
 
 interface GeneratorSidebarProps {
@@ -14,13 +13,11 @@ interface GeneratorSidebarProps {
     merchantOptions: MerchantOptionsResponse['data'] | null
     priceModifierOptions: PriceModifierOption[]
     generationFilters: MerchantGenerationFilters
-    savedMerchants: SavedMerchant[]
     onGenerationFiltersChange: React.Dispatch<
         React.SetStateAction<MerchantGenerationFilters>
     >
     onGenerateMerchant: () => void
     onCopyMerchant: () => void
-    onLoadSavedMerchant: (savedMerchant: SavedMerchant) => void
 }
 
 export const GeneratorSidebar = ({
@@ -29,12 +26,12 @@ export const GeneratorSidebar = ({
     merchantOptions,
     priceModifierOptions,
     generationFilters,
-    savedMerchants,
     onGenerationFiltersChange,
     onGenerateMerchant,
     onCopyMerchant,
-    onLoadSavedMerchant,
-}: GeneratorSidebarProps) => {
+    }: GeneratorSidebarProps) => {
+    const [showMobileFilters, setShowMobileFilters] = useState(false)
+
     const shopTypes = merchantOptions?.shopTypes ?? []
     const merchantQualities = merchantOptions?.merchantQualities ?? []
     const speciesOptions = merchantOptions?.species ?? []
@@ -43,148 +40,188 @@ export const GeneratorSidebar = ({
     const updateGenerationFilter = (
         field: keyof MerchantGenerationFilters,
         value: string,
-        ) => {
+    ) => {
         onGenerationFiltersChange((currentFilters) => ({
-            ...currentFilters,
-            [field]: value === '' ? null : value,
+        ...currentFilters,
+        [field]: value === '' ? null : value,
         }))
-        }
+    }
 
     const updateNumericGenerationFilter = (
         field: 'shopTypeId' | 'merchantQualityId',
         value: string,
-        ) => {
+    ) => {
         onGenerationFiltersChange((currentFilters) => ({
-            ...currentFilters,
-            [field]: value === '' ? null : Number(value),
+        ...currentFilters,
+        [field]: value === '' ? null : Number(value),
         }))
-        }
-
-    const [showFullHistory, setShowFullHistory] = useState(false)
-
-    const visibleSavedMerchants = showFullHistory
-    ? savedMerchants
-    : savedMerchants.slice(0, 5)
+    }
 
     return (
-        <>
-        <div className="d-grid gap-3 mb-4">
-            <div>
-                <label htmlFor="shop-type-filter" className="form-label small text-light-emphasis">
-                Tipo de tienda
-                </label>
-                <select
-                    id="shop-type-filter"
-                    className="form-select"
-                    value={generationFilters.shopTypeId ?? ''}
-                    onChange={(event) =>
-                        updateNumericGenerationFilter('shopTypeId', event.target.value)
-                    }
-                    >                
-                <option value="">Aleatorio</option>
-                {shopTypes.map((shopType) => (
-                    <option key={shopType.id} value={shopType.id}>
-                    {shopType.name}
-                    </option>
-                ))}
-                </select>
-            </div>
+        <section className="merchant-sidebar rounded-4 p-4 h-100">
+            {!showMobileFilters && (
+                <div className="d-flex justify-content-center d-lg-none">
+                    <button
+                    type="button"
+                    className="btn btn-outline-light btn-sm mb-3 mobile-sidebar-toggle"
+                    onClick={() => setShowMobileFilters(true)}
+                    >
+                    Mostrar opciones ▼
+                    </button>
+                </div>
+                )}
 
-            <div>
-                <label htmlFor="quality-filter" className="form-label small text-light-emphasis">
-                Calidad
+            <div
+                className={`gap-3 mb-4 ${
+                showMobileFilters ? 'd-grid' : 'd-none d-lg-grid'
+                }`}
+                >
+                <div>
+                    <label
+                        htmlFor="shop-type-filter"
+                        className="form-label small text-light-emphasis"
+                    >
+                        Tipo de tienda
+                    </label>
+                    <select
+                        id="shop-type-filter"
+                        className="form-select"
+                        value={generationFilters.shopTypeId ?? ''}
+                        onChange={(event) =>
+                        updateNumericGenerationFilter('shopTypeId', event.target.value)
+                        }
+                    >
+                        <option value="">Aleatorio</option>
+                        {shopTypes.map((shopType) => (
+                        <option key={shopType.id} value={shopType.id}>
+                            {shopType.name}
+                        </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div>
+                <label
+                    htmlFor="quality-filter"
+                    className="form-label small text-light-emphasis"
+                >
+                    Calidad
                 </label>
                 <select
                     id="quality-filter"
                     className="form-select"
                     value={generationFilters.merchantQualityId ?? ''}
                     onChange={(event) =>
-                        updateNumericGenerationFilter('merchantQualityId', event.target.value)
+                    updateNumericGenerationFilter(
+                        'merchantQualityId',
+                        event.target.value,
+                    )
                     }
-                    >                
-                <option value="">Aleatoria</option>
-                {merchantQualities.map((quality) => (
+                >
+                    <option value="">Aleatoria</option>
+                    {merchantQualities.map((quality) => (
                     <option key={quality.id} value={quality.id}>
-                    {quality.name}
+                        {quality.name}
                     </option>
-                ))}
+                    ))}
                 </select>
-            </div>
+                </div>
 
-            <div>
-                <label htmlFor="species-filter" className="form-label small text-light-emphasis">
-                Especie
+                <div>
+                <label
+                    htmlFor="species-filter"
+                    className="form-label small text-light-emphasis"
+                >
+                    Especie
                 </label>
                 <select
                     id="species-filter"
                     className="form-select"
                     value={generationFilters.species ?? ''}
                     onChange={(event) =>
-                        updateGenerationFilter('species', event.target.value)
+                    updateGenerationFilter('species', event.target.value)
                     }
-                    >
-                <option value="">Aleatoria</option>
-                {speciesOptions.map((species) => (
+                >
+                    <option value="">Aleatoria</option>
+                    {speciesOptions.map((species) => (
                     <option key={species} value={species}>
-                    {species}
+                        {species}
                     </option>
-                ))}
+                    ))}
                 </select>
-            </div>
+                </div>
 
-            <div>
-                <label htmlFor="region-filter" className="form-label small text-light-emphasis">
-                Región
+                <div>
+                <label
+                    htmlFor="region-filter"
+                    className="form-label small text-light-emphasis"
+                >
+                    Región
                 </label>
                 <select
                     id="region-filter"
                     className="form-select"
                     value={generationFilters.region ?? ''}
                     onChange={(event) =>
-                        updateGenerationFilter('region', event.target.value)
+                    updateGenerationFilter('region', event.target.value)
                     }
-                    >
-                <option value="">Aleatoria</option>
-                {regionOptions.map((region) => (
+                >
+                    <option value="">Aleatoria</option>
+                    {regionOptions.map((region) => (
                     <option key={region} value={region}>
-                    {region}
+                        {region}
                     </option>
-                ))}
+                    ))}
                 </select>
-            </div>
+                </div>
 
-            <div>
-                <label htmlFor="attitude-filter" className="form-label small text-light-emphasis">
-                Actitud
+                <div>
+                <label
+                    htmlFor="attitude-filter"
+                    className="form-label small text-light-emphasis"
+                >
+                    Actitud
                 </label>
                 <select
                     id="attitude-filter"
                     className="form-select"
                     value={generationFilters.attitude ?? ''}
                     onChange={(event) => {
-                        const selectedAttitude = event.target.value
-                        const selectedOption = priceModifierOptions.find(
+                    const selectedAttitude = event.target.value
+                    const selectedOption = priceModifierOptions.find(
                         (option) => option.attitudeLabel === selectedAttitude,
-                        )
+                    )
 
-                        onGenerationFiltersChange((currentFilters) => ({
+                    onGenerationFiltersChange((currentFilters) => ({
                         ...currentFilters,
                         attitude: selectedAttitude === '' ? null : selectedAttitude,
                         priceModifierPercent:
-                            selectedAttitude === '' ? null : selectedOption?.value ?? null,
-                        }))
+                        selectedAttitude === '' ? null : selectedOption?.value ?? null,
+                    }))
                     }}
-                    >
-                <option value="">Aleatoria</option>
-                {priceModifierOptions.map((option) => (
+                >
+                    <option value="">Aleatoria</option>
+                    {priceModifierOptions.map((option) => (
                     <option key={option.value} value={option.attitudeLabel}>
-                    {option.attitudeLabel} ({option.priceLabel})
+                        {option.attitudeLabel} ({option.priceLabel})
                     </option>
-                ))}
+                    ))}
                 </select>
+                </div>
             </div>
-            </div>
-        <section className="merchant-sidebar rounded-4 p-4 h-100">
+
+            {showMobileFilters && (
+                <div className="d-flex justify-content-center d-lg-none">
+                    <button
+                    type="button"
+                    className="btn btn-outline-light btn-sm mb-4 mobile-sidebar-toggle"
+                    onClick={() => setShowMobileFilters(false)}
+                    >
+                    Ocultar opciones ▲
+                    </button>
+                </div>
+                )}
+
             <div className="d-grid gap-3">
                 <button
                 type="button"
@@ -196,56 +233,14 @@ export const GeneratorSidebar = ({
                 </button>
 
                 <button
-                    type="button"
-                    onClick={onCopyMerchant}
-                    className="btn btn-outline-light"
-                    disabled={!merchant}
-                    >
-                    Copiar mercader
+                type="button"
+                onClick={onCopyMerchant}
+                className="btn btn-outline-light"
+                disabled={!merchant}
+                >
+                Copiar mercader
                 </button>
             </div>
-
-            {merchant && (
-                <div className="mt-4 pt-4 border-top border-light border-opacity-25">
-                    <p className="small text-uppercase text-light-emphasis mb-3">
-                        Historial local
-                    </p>
-
-                    {savedMerchants.length === 0 ? (
-                        <p className="small text-light-emphasis mb-0">
-                        Todavía no hay mercaderes guardados.
-                        </p>
-                    ) : (
-                        <div className="d-flex flex-column gap-3">
-                        {visibleSavedMerchants.map((savedMerchant) => (
-                            <button
-                                key={savedMerchant.id}
-                                type="button"
-                                className="btn btn-link text-start text-decoration-none p-0 text-light"
-                                onClick={() => onLoadSavedMerchant(savedMerchant)}
-                                >
-                                <p className="mb-1 fw-semibold">
-                                    {savedMerchant.merchant.name}
-                                </p>
-                                <p className="mb-0 small text-light-emphasis">
-                                    {savedMerchant.merchant.species} · {savedMerchant.merchant.region}
-                                </p>
-                            </button>
-                        ))}
-                        {savedMerchants.length > 5 && (
-                            <button
-                                type="button"
-                                className="btn btn-sm text-light p-0 history-toggle-button"
-                                onClick={() => setShowFullHistory((currentValue) => !currentValue)}
-                            >
-                                {showFullHistory ? '▲' : '▼'}
-                            </button>
-                            )}
-                        </div>
-                    )}
-                    </div>
-            )}
         </section>
-        </>
     )
 }

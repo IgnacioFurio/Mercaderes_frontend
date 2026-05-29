@@ -13,7 +13,6 @@ import type {
     MerchantOptionsResponse,
     MerchantPreview,
     PriceModifierOption,
-    SavedMerchant,
 } from '../types/merchant.types'
 
 import { GeneratorSidebar } from '../components/GeneratorSidebar'
@@ -21,10 +20,7 @@ import { MerchantCard } from '../components/MerchantCard'
 import { InventoryCard } from '../components/InventoryCard'
 import { Footer } from '../components/Footer'
 
-import {
-    getSavedMerchants,
-    saveMerchantToLocalStorage,
-} from '../services/localStorageService'
+import { saveMerchantToLocalStorage } from '../services/localStorageService'
 
 function HomePage() {
     const [merchant, setMerchant] = useState<MerchantPreview | null>(null)
@@ -76,14 +72,13 @@ function HomePage() {
                 setInventory(generatedInventory)
                 setInventorySize(result.data.inventorySize)
 
-                const updatedSavedMerchants = saveMerchantToLocalStorage({
-                    id: crypto.randomUUID(),
-                    savedAt: new Date().toISOString(),
-                    merchant: generatedMerchant,
-                    inventory: generatedInventory,
+                saveMerchantToLocalStorage({
+                id: crypto.randomUUID(),
+                savedAt: new Date().toISOString(),
+                merchant: generatedMerchant,
+                inventory: generatedInventory,
                 })
 
-                setSavedMerchants(updatedSavedMerchants)
             })
             .catch((error) => {
             console.log(error)
@@ -95,8 +90,6 @@ function HomePage() {
             setIsLoading(false)
             })
         }
-
-    const [savedMerchants, setSavedMerchants] = useState<SavedMerchant[]>([])
 
     //USESTATE
     useEffect(() => {
@@ -121,8 +114,6 @@ function HomePage() {
             })
 
         generateMerchantData()
-
-        setSavedMerchants(getSavedMerchants())
     }, [])
 
     //FUNCTIONS
@@ -206,14 +197,6 @@ function HomePage() {
             console.log(error)
             setErrorMessage('No se pudo copiar el mercader al portapapeles.')
             })
-        }
-
-    const loadSavedMerchant = (savedMerchant: SavedMerchant) => {
-        setMerchant(savedMerchant.merchant)
-        setInventory(savedMerchant.inventory)
-        setInventorySize(savedMerchant.inventory.length)
-        setSellAmounts({})
-        setErrorMessage(null)
         }
 
     //HANDLERS
@@ -307,11 +290,9 @@ function HomePage() {
                             merchantOptions={merchantOptions}
                             priceModifierOptions={priceModifierOptions}
                             generationFilters={generationFilters}
-                            savedMerchants={savedMerchants}
                             onGenerationFiltersChange={setGenerationFilters}
                             onGenerateMerchant={generateMerchantData}
                             onCopyMerchant={copyMerchantToClipboard}
-                            onLoadSavedMerchant={loadSavedMerchant}
                             />
                     </aside>
 

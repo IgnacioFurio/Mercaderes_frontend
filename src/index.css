@@ -106,6 +106,12 @@ button:focus-visible {
   transform: translateY(-1px);
 }
 
+.mobile-sidebar-toggle {
+  min-width: 220px;
+  max-width: 320px;
+  width: 70%;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
