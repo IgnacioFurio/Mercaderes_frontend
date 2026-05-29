@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+
 import {
     calculateSale,
     generateMerchantPreview,
@@ -18,9 +20,11 @@ import type {
 import { GeneratorSidebar } from '../components/GeneratorSidebar'
 import { MerchantCard } from '../components/MerchantCard'
 import { InventoryCard } from '../components/InventoryCard'
-import { Footer } from '../components/Footer'
 
-import { saveMerchantToLocalStorage } from '../services/localStorageService'
+import {
+  getSavedMerchants,
+  saveMerchantToLocalStorage,
+} from '../services/localStorageService'
 
 function HomePage() {
     const [merchant, setMerchant] = useState<MerchantPreview | null>(null)
@@ -44,6 +48,9 @@ function HomePage() {
             attitude: null,
             priceModifierPercent: null,
         })
+
+    const [searchParams] = useSearchParams()
+    const savedMerchantId = searchParams.get('savedMerchantId')
 
     const generateMerchantData = () => {
         setIsLoading(true)
@@ -112,6 +119,21 @@ function HomePage() {
                 'No se pudieron cargar las opciones de actitud del mercader.',
             )
             })
+
+        if (savedMerchantId) {
+            const savedMerchantToLoad = getSavedMerchants().find(
+                (savedMerchant) => savedMerchant.id === savedMerchantId,
+            )
+
+            if (savedMerchantToLoad) {
+                setMerchant(savedMerchantToLoad.merchant)
+                setInventory(savedMerchantToLoad.inventory)
+                setInventorySize(savedMerchantToLoad.inventory.length)
+                setSellAmounts({})
+                setErrorMessage(null)
+                return
+            }
+        }
 
         generateMerchantData()
     }, [])
@@ -280,54 +302,51 @@ function HomePage() {
         }
 
     return (
-        <main className="min-vh-100 bg-dark text-light">
-            <div className="container-fluid py-4">
-                <div className="row g-4">
-                    <aside className="col-12 col-lg-3 col-xl-2">
-                        <GeneratorSidebar
-                            merchant={merchant}
-                            isLoading={isLoading}
-                            merchantOptions={merchantOptions}
-                            priceModifierOptions={priceModifierOptions}
-                            generationFilters={generationFilters}
-                            onGenerationFiltersChange={setGenerationFilters}
-                            onGenerateMerchant={generateMerchantData}
-                            onCopyMerchant={copyMerchantToClipboard}
-                            />
-                    </aside>
-
-                <section className="col-12 col-lg-9 col-xl-10">
-                    {errorMessage && (
-                        <div className="alert alert-danger" role="alert">
-                        {errorMessage}
-                        </div>
-                    )}
-
-                    <div className="row g-4">
-                        <div className="col-12">
-                        <MerchantCard 
-                            merchant={merchant}
-                            priceModifierOptions={priceModifierOptions}
-                            onMerchantAttitudeChange={handleMerchantAttitudeChange}
-                            />
-                        </div>
-
-                        <div className="col-12">
-                        <InventoryCard
-                            merchant={merchant}
-                            inventory={inventory}
-                            inventorySize={inventorySize}
-                            sellAmounts={sellAmounts}
-                            onSellAmountChange={handleSellAmountChange}
-                            onSellItem={handleSellItem}
+        <div className="container-fluid py-4">
+            <div className="row g-4">
+                <aside className="col-12 col-lg-3 col-xl-2">
+                    <GeneratorSidebar
+                        merchant={merchant}
+                        isLoading={isLoading}
+                        merchantOptions={merchantOptions}
+                        priceModifierOptions={priceModifierOptions}
+                        generationFilters={generationFilters}
+                        onGenerationFiltersChange={setGenerationFilters}
+                        onGenerateMerchant={generateMerchantData}
+                        onCopyMerchant={copyMerchantToClipboard}
                         />
-                        </div>
+                </aside>
+
+            <section className="col-12 col-lg-9 col-xl-10">
+                {errorMessage && (
+                    <div className="alert alert-danger" role="alert">
+                    {errorMessage}
                     </div>
-                    </section>
+                )}
+
+                <div className="row g-4">
+                    <div className="col-12">
+                    <MerchantCard 
+                        merchant={merchant}
+                        priceModifierOptions={priceModifierOptions}
+                        onMerchantAttitudeChange={handleMerchantAttitudeChange}
+                        />
+                    </div>
+
+                    <div className="col-12">
+                    <InventoryCard
+                        merchant={merchant}
+                        inventory={inventory}
+                        inventorySize={inventorySize}
+                        sellAmounts={sellAmounts}
+                        onSellAmountChange={handleSellAmountChange}
+                        onSellItem={handleSellItem}
+                    />
+                    </div>
                 </div>
+                </section>
             </div>
-            <Footer />
-        </main>
+        </div>
     )
 }
 

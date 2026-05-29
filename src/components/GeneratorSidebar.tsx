@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import type {
     MerchantGenerationFilters,
@@ -60,172 +61,177 @@ export const GeneratorSidebar = ({
     return (
         <section className="merchant-sidebar rounded-4 p-4 h-100">
             {!showMobileFilters && (
-                <div className="d-flex justify-content-center d-lg-none">
-                    <button
-                    type="button"
-                    className="btn btn-outline-light btn-sm mb-3 mobile-sidebar-toggle"
-                    onClick={() => setShowMobileFilters(true)}
-                    >
-                    Mostrar opciones ▼
-                    </button>
-                </div>
-                )}
+            <div className="d-flex justify-content-center d-lg-none mb-3 ">
+                <button
+                type="button"
+                className="btn btn-outline-light btn-sm mobile-sidebar-toggle sidebar-action-button"
+                onClick={() => setShowMobileFilters(true)}
+                >
+                Mostrar opciones ▼
+                </button>
+            </div>
+            )}
+
+            {!showMobileFilters && (
+            <div className="d-flex justify-content-center d-lg-none">
+                <button
+                type="button"
+                className="btn btn-warning fw-semibold sidebar-action-button"
+                onClick={onGenerateMerchant}
+                disabled={isLoading}
+                >
+                {isLoading ? 'Generando...' : 'Generar mercader'}
+                </button>
+            </div>
+            )}
 
             <div
-                className={`gap-3 mb-4 ${
+            className={`gap-3 mb-4 ${
                 showMobileFilters ? 'd-grid' : 'd-none d-lg-grid'
-                }`}
-                >
-                <div>
-                    <label
-                        htmlFor="shop-type-filter"
-                        className="form-label small text-light-emphasis"
-                    >
-                        Tipo de tienda
-                    </label>
-                    <select
-                        id="shop-type-filter"
-                        className="form-select"
-                        value={generationFilters.shopTypeId ?? ''}
-                        onChange={(event) =>
-                        updateNumericGenerationFilter('shopTypeId', event.target.value)
-                        }
-                    >
-                        <option value="">Aleatorio</option>
-                        {shopTypes.map((shopType) => (
-                        <option key={shopType.id} value={shopType.id}>
-                            {shopType.name}
-                        </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div>
+            }`}
+            >
+            <div>
                 <label
-                    htmlFor="quality-filter"
-                    className="form-label small text-light-emphasis"
+                htmlFor="shop-type-filter"
+                className="form-label small text-light-emphasis"
                 >
-                    Calidad
+                Tipo de tienda
                 </label>
+
                 <select
-                    id="quality-filter"
-                    className="form-select"
-                    value={generationFilters.merchantQualityId ?? ''}
-                    onChange={(event) =>
+                id="shop-type-filter"
+                className="form-select"
+                value={generationFilters.shopTypeId ?? ''}
+                onChange={(event) =>
+                    updateNumericGenerationFilter('shopTypeId', event.target.value)
+                }
+                >
+                <option value="">Aleatorio</option>
+                {shopTypes.map((shopType) => (
+                    <option key={shopType.id} value={shopType.id}>
+                    {shopType.name}
+                    </option>
+                ))}
+                </select>
+            </div>
+
+            <div>
+                <label
+                htmlFor="quality-filter"
+                className="form-label small text-light-emphasis"
+                >
+                Calidad
+                </label>
+
+                <select
+                id="quality-filter"
+                className="form-select"
+                value={generationFilters.merchantQualityId ?? ''}
+                onChange={(event) =>
                     updateNumericGenerationFilter(
-                        'merchantQualityId',
-                        event.target.value,
+                    'merchantQualityId',
+                    event.target.value,
                     )
-                    }
+                }
                 >
-                    <option value="">Aleatoria</option>
-                    {merchantQualities.map((quality) => (
+                <option value="">Aleatoria</option>
+                {merchantQualities.map((quality) => (
                     <option key={quality.id} value={quality.id}>
-                        {quality.name}
+                    {quality.name}
                     </option>
-                    ))}
+                ))}
                 </select>
-                </div>
+            </div>
 
-                <div>
+            <div>
                 <label
-                    htmlFor="species-filter"
-                    className="form-label small text-light-emphasis"
+                htmlFor="species-filter"
+                className="form-label small text-light-emphasis"
                 >
-                    Especie
+                Especie
                 </label>
+
                 <select
-                    id="species-filter"
-                    className="form-select"
-                    value={generationFilters.species ?? ''}
-                    onChange={(event) =>
+                id="species-filter"
+                className="form-select"
+                value={generationFilters.species ?? ''}
+                onChange={(event) =>
                     updateGenerationFilter('species', event.target.value)
-                    }
+                }
                 >
-                    <option value="">Aleatoria</option>
-                    {speciesOptions.map((species) => (
+                <option value="">Aleatoria</option>
+                {speciesOptions.map((species) => (
                     <option key={species} value={species}>
-                        {species}
+                    {species}
                     </option>
-                    ))}
+                ))}
                 </select>
-                </div>
+            </div>
 
-                <div>
+            <div>
                 <label
-                    htmlFor="region-filter"
-                    className="form-label small text-light-emphasis"
+                htmlFor="region-filter"
+                className="form-label small text-light-emphasis"
                 >
-                    Región
+                Región
                 </label>
+
                 <select
-                    id="region-filter"
-                    className="form-select"
-                    value={generationFilters.region ?? ''}
-                    onChange={(event) =>
+                id="region-filter"
+                className="form-select"
+                value={generationFilters.region ?? ''}
+                onChange={(event) =>
                     updateGenerationFilter('region', event.target.value)
-                    }
+                }
                 >
-                    <option value="">Aleatoria</option>
-                    {regionOptions.map((region) => (
+                <option value="">Aleatoria</option>
+                {regionOptions.map((region) => (
                     <option key={region} value={region}>
-                        {region}
+                    {region}
                     </option>
-                    ))}
+                ))}
                 </select>
-                </div>
+            </div>
 
-                <div>
+            <div>
                 <label
-                    htmlFor="attitude-filter"
-                    className="form-label small text-light-emphasis"
+                htmlFor="attitude-filter"
+                className="form-label small text-light-emphasis"
                 >
-                    Actitud
+                Actitud
                 </label>
+
                 <select
-                    id="attitude-filter"
-                    className="form-select"
-                    value={generationFilters.attitude ?? ''}
-                    onChange={(event) => {
+                id="attitude-filter"
+                className="form-select"
+                value={generationFilters.attitude ?? ''}
+                onChange={(event) => {
                     const selectedAttitude = event.target.value
                     const selectedOption = priceModifierOptions.find(
-                        (option) => option.attitudeLabel === selectedAttitude,
+                    (option) => option.attitudeLabel === selectedAttitude,
                     )
 
                     onGenerationFiltersChange((currentFilters) => ({
-                        ...currentFilters,
-                        attitude: selectedAttitude === '' ? null : selectedAttitude,
-                        priceModifierPercent:
+                    ...currentFilters,
+                    attitude: selectedAttitude === '' ? null : selectedAttitude,
+                    priceModifierPercent:
                         selectedAttitude === '' ? null : selectedOption?.value ?? null,
                     }))
-                    }}
+                }}
                 >
-                    <option value="">Aleatoria</option>
-                    {priceModifierOptions.map((option) => (
+                <option value="">Aleatoria</option>
+                {priceModifierOptions.map((option) => (
                     <option key={option.value} value={option.attitudeLabel}>
-                        {option.attitudeLabel} ({option.priceLabel})
+                    {option.attitudeLabel} ({option.priceLabel})
                     </option>
-                    ))}
+                ))}
                 </select>
-                </div>
             </div>
 
-            {showMobileFilters && (
-                <div className="d-flex justify-content-center d-lg-none">
-                    <button
-                    type="button"
-                    className="btn btn-outline-light btn-sm mb-4 mobile-sidebar-toggle"
-                    onClick={() => setShowMobileFilters(false)}
-                    >
-                    Ocultar opciones ▲
-                    </button>
-                </div>
-                )}
-
-            <div className="d-grid gap-3">
+            <div className="d-flex flex-column align-items-center gap-3 mt-2">
                 <button
                 type="button"
-                className="btn btn-warning btn-lg fw-semibold"
+                className="btn btn-warning fw-semibold sidebar-action-button"
                 onClick={onGenerateMerchant}
                 disabled={isLoading}
                 >
@@ -235,12 +241,32 @@ export const GeneratorSidebar = ({
                 <button
                 type="button"
                 onClick={onCopyMerchant}
-                className="btn btn-outline-light"
+                className="btn btn-outline-light sidebar-action-button"
                 disabled={!merchant}
                 >
                 Copiar mercader
                 </button>
+
+                <Link
+                to="/history"
+                className="btn btn-outline-light sidebar-action-button"
+                >
+                Ver historial
+                </Link>
             </div>
+            </div>
+
+            {showMobileFilters && (
+            <div className="d-flex justify-content-center d-lg-none">
+                <button
+                type="button"
+                className="btn btn-outline-light btn-sm mobile-sidebar-toggle sidebar-action-button"
+                onClick={() => setShowMobileFilters(false)}
+                >
+                Ocultar opciones ▲
+                </button>
+            </div>
+            )}
         </section>
     )
 }
