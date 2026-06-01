@@ -173,3 +173,17 @@ Endpoints principales utilizados:
 Mercaderes nace como una herramienta práctica para mesa: rápida, útil y sin demasiada ceremonia.
 
 La prioridad es darle al DM un mercader jugable en segundos.
+
+---
+
+## Autoría
+
+Proyecto creado por **Ignacio Furió**, bajo la marca creativa **Eddieden DM**.
+
+Mercaderes es una herramienta fan-made para uso en partidas de rol. No es un producto oficial de Wizards of the Coast ni de ninguna editorial asociada.
+
+---
+
+## Licencia
+
+Ver archivo `LICENSE`.
